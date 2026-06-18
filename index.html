@@ -1,13 +1,89 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>VECTUZ</title>
-    <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; background-color: #f4f4f4; }
-        h1 { color: #333; }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VECTUZ Sports | Premium World Cup Odds</title>
+    <link rel="stylesheet" href="./css/style.css">
 </head>
 <body>
-    <h1>VECTUZ is coming soon.</h1>
+
+    <!-- Navigation -->
+    <nav class="ios-nav glass">
+        <div class="nav-content">
+            <h1 class="logo">VECTUZ</h1>
+            <button class="btn-secondary" id="loginBtn">Sign In</button>
+        </div>
+    </nav>
+
+    <!-- Main Dashboard -->
+    <main class="dashboard">
+        <header class="dashboard-header">
+            <h2>World Cup 2026</h2>
+            <p>Exclusive Surebet Analytics</p>
+        </header>
+
+        <!-- Games Grid -->
+        <section class="games-grid" id="gamesGrid">
+            <!-- Game Card 1 -->
+            <article class="game-card">
+                <div class="teams">
+                    <span class="team">Brazil</span>
+                    <span class="vs">vs</span>
+                    <span class="team">France</span>
+                </div>
+                <div class="match-details">
+                    <p class="date">June 24, 2026 • Group Stage</p>
+                    <p class="confidence">Confidence: <strong>94%</strong></p>
+                </div>
+                <button class="btn-primary buy-odds-btn" data-game="BRA vs FRA" data-price="$49.99">Unlock Surebet - $49.99</button>
+            </article>
+
+            <!-- Game Card 2 -->
+            <article class="game-card">
+                <div class="teams">
+                    <span class="team">USA</span>
+                    <span class="vs">vs</span>
+                    <span class="team">England</span>
+                </div>
+                <div class="match-details">
+                    <p class="date">June 26, 2026 • Group Stage</p>
+                    <p class="confidence">Confidence: <strong>88%</strong></p>
+                </div>
+                <button class="btn-primary buy-odds-btn" data-game="USA vs ENG" data-price="$39.99">Unlock Surebet - $39.99</button>
+            </article>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <p>&copy; 2026 VECTUZ Sports. All rights reserved.</p>
+        <a href="#" class="tc-link">Terms & Conditions</a>
+    </footer>
+
+    <!-- Payment Prompt Modal -->
+    <dialog id="paymentModal" class="ios-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalGameTitle">Match Name</h3>
+                <button class="close-btn" id="closeModalBtn">&times;</button>
+            </div>
+            <p class="modal-subtitle">Secure Payment</p>
+            
+            <div class="payment-details">
+                <div class="detail-row">
+                    <span>Premium Odds Package</span>
+                    <span id="modalPrice" class="price-highlight">$0.00</span>
+                </div>
+                <hr>
+                <p class="terms-micro">By proceeding, you agree to our <a href="#">Terms & Conditions</a>. Odds access is digital and non-refundable.</p>
+            </div>
+
+            <button class="btn-pay" id="confirmPaymentBtn">Pay with Apple Pay</button>
+            <button class="btn-text" id="cancelBtn">Cancel</button>
+        </div>
+    </dialog>
+
+    <script src="./js/app.js"></script>
 </body>
 </html>
