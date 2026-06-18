@@ -1,0 +1,263 @@
+/* --- System Variables & Resets --- */
+:root {
+    --ios-bg: #F2F2F7;
+    --ios-surface: #FFFFFF;
+    --ios-blue: #007AFF;
+    --ios-blue-active: #005bb5;
+    --ios-text-main: #1C1C1E;
+    --ios-text-muted: #8E8E93;
+    --ios-radius: 20px;
+    /* Apple's signature spring animation curve */
+    --spring-easing: cubic-bezier(0.32, 0.72, 0, 1); 
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent; /* Removes default Android/iOS tap flashes */
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--ios-bg);
+    color: var(--ios-text-main);
+    line-height: 1.5;
+    padding-top: 80px; /* Space for fixed nav */
+}
+
+/* --- Navigation --- */
+.ios-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    z-index: 100;
+    border-bottom: 0.5px solid rgba(0, 0, 0, 0.1);
+}
+
+.glass {
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+}
+
+.nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+/* --- Dashboard & Layout --- */
+.dashboard {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.dashboard-header {
+    margin-bottom: 30px;
+}
+
+.dashboard-header h2 {
+    font-size: 34px;
+    font-weight: 700;
+    letter-spacing: -1px;
+}
+
+.dashboard-header p {
+    color: var(--ios-text-muted);
+    font-size: 17px;
+}
+
+.games-grid {
+    display: grid;
+    gap: 20px;
+}
+
+/* --- iOS Cards --- */
+.game-card {
+    background-color: var(--ios-surface);
+    border-radius: var(--ios-radius);
+    padding: 24px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
+    transition: transform 0.3s var(--spring-easing), box-shadow 0.3s ease;
+}
+
+.game-card:active {
+    transform: scale(0.97); /* The "Punchy" press effect */
+}
+
+.teams {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 12px;
+}
+
+.vs {
+    font-size: 15px;
+    color: var(--ios-text-muted);
+    font-weight: 500;
+}
+
+.match-details {
+    margin-bottom: 24px;
+}
+
+.date {
+    font-size: 14px;
+    color: var(--ios-text-muted);
+}
+
+.confidence strong {
+    color: #34C759; /* iOS Green */
+}
+
+/* --- Buttons --- */
+button {
+    border: none;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 17px;
+    font-weight: 600;
+    border-radius: 14px;
+    transition: all 0.2s ease;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 16px;
+    background-color: var(--ios-blue);
+    color: white;
+}
+
+.btn-primary:active {
+    background-color: var(--ios-blue-active);
+    transform: scale(0.98);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--ios-blue);
+    font-size: 15px;
+}
+
+/* --- Payment Modal (The Dialog) --- */
+.ios-modal {
+    margin: auto;
+    border: none;
+    border-radius: 24px;
+    background: var(--ios-surface);
+    width: 90%;
+    max-width: 400px;
+    padding: 0;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Modal Backdrop (Native to Dialog) */
+.ios-modal::backdrop {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    opacity: 0;
+    transition: opacity 0.4s var(--spring-easing);
+}
+
+.ios-modal[open]::backdrop {
+    opacity: 1;
+}
+
+/* Dialog Animation */
+.ios-modal[open] {
+    animation: slideUp 0.5s var(--spring-easing) forwards;
+}
+
+@keyframes slideUp {
+    0% { transform: translateY(40px) scale(0.95); opacity: 0; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.modal-content {
+    padding: 24px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.close-btn {
+    background: #E5E5EA;
+    color: #8E8E93;
+    width: 30px;
+    height: 30px;
+    border-radius: 15px;
+    font-size: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.payment-details {
+    background: #F2F2F7;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 24px 0;
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    font-weight: 600;
+}
+
+.terms-micro {
+    font-size: 12px;
+    color: var(--ios-text-muted);
+    margin-top: 12px;
+}
+
+.btn-pay {
+    width: 100%;
+    padding: 16px;
+    background-color: #000; /* Apple Pay aesthetic */
+    color: white;
+    margin-bottom: 12px;
+}
+
+.btn-text {
+    width: 100%;
+    background: transparent;
+    color: var(--ios-blue);
+}
+
+/* --- Footer --- */
+.site-footer {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--ios-text-muted);
+    font-size: 13px;
+}
+
+.tc-link {
+    color: var(--ios-blue);
+    text-decoration: none;
+    display: block;
+    margin-top: 8px;
+}
