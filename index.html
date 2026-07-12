@@ -1,191 +1,444 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Vectors | Websites & Mobile Apps</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
-  <style>
-    .hero-bg {
-      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://picsum.photos/id/1015/2000/1200');
-      background-size: cover;
-      background-position: center;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VECTUZ | Web & Mobile App Engineering</title>
+    <style>
+        /* --- CSS DESIGN SYSTEM --- */
+        :root {
+            --bg-primary: #0b0f19;
+            --bg-secondary: #131c2e;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            
+            /* Brand Gradients */
+            --grad-primary: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            --grad-ios: linear-gradient(135deg, #2997ff 0%, #0071e3 100%);
+            --grad-android: linear-gradient(135deg, #3ddc84 0%, #0ba360 100%);
+            
+            --font-stack: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-main);
+            font-family: var(--font-stack);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 8%;
+            background: rgba(11, 15, 25, 0.8);
+            backdrop-filter: blur(12px);
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: var(--grad-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        nav a {
+            color: var(--text-main);
+            text-decoration: none;
+            margin-left: 2rem;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        nav a:hover {
+            color: #a855f7;
+        }
+
+        .cta-btn {
+            background: var(--grad-primary);
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .cta-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(168, 85, 247, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 2rem 4rem 2rem;
+            background: radial-gradient(circle at top, var(--accent-glow) 0%, transparent 60%);
+        }
+
+        .badge {
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            color: #818cf8;
+            padding: 0.4rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            max-width: 900px;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero h1 span {
+            background: var(--grad-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Services Grid */
+        .services {
+            padding: 6rem 8%;
+            background-color: var(--bg-secondary);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 4rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2.5rem;
+            border-radius: 12px;
+            transition: transform 0.3s ease, border-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(168, 85, 247, 0.3);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .icon-web { background: rgba(99, 102, 241, 0.1); color: #818cf8; }
+        .icon-ios { background: rgba(41, 151, 255, 0.1); color: #2997ff; }
+        .icon-android { background: rgba(61, 220, 132, 0.1); color: #3ddc84; }
+
+        .card h3 {
+            font-size: 1.35rem;
+            margin-bottom: 1rem;
+        }
+
+        .card p {
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        /* Interactive Showcase Section */
+        .showcase {
+            padding: 6rem 8%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .toggle-container {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.3rem;
+            border-radius: 8px;
+            margin-bottom: 3rem;
+        }
+
+        .toggle-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.6rem 1.5rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background: var(--bg-primary);
+            color: var(--text-main);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .mockup-display {
+            width: 100%;
+            max-width: 700px;
+            background: var(--bg-secondary);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mockup-frame {
+            font-size: 1.1rem;
+            font-weight: 500;
+            transition: all 0.5s ease;
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 6rem 8%;
+            background-color: var(--bg-secondary);
+            text-align: center;
+        }
+
+        .contact-form {
+            max-width: 500px;
+            margin: 2rem auto 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .contact-form input, .contact-form textarea {
+            background: var(--bg-primary);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 6px;
+            color: var(--text-main);
+            font-family: var(--font-stack);
+            font-size: 1rem;
+        }
+
+        .contact-form input:focus, .contact-form textarea:focus {
+            outline: 2px solid #6366f1;
+        }
+
+        footer {
+            padding: 2rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* Responsive Breakpoints */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2.5rem; }
+            nav { display: none; } /* Simplified for single view mobile */
+        }
+    </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans">
+<body>
 
-  <!-- Navbar -->
-  <nav class="bg-white shadow-md sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-      <div class="text-3xl font-bold text-indigo-600">Vectors</div>
-      
-      <div class="hidden md:flex space-x-8 text-lg">
-        <a href="#services" class="hover:text-indigo-600 transition">Services</a>
-        <a href="#portfolio" class="hover:text-indigo-600 transition">Portfolio</a>
-        <a href="#about" class="hover:text-indigo-600 transition">About</a>
-        <a href="#contact" class="hover:text-indigo-600 transition">Contact</a>
-      </div>
-      
-      <button onclick="toggleMobileMenu()" class="md:hidden text-2xl">
-        <i class="fas fa-bars"></i>
-      </button>
-    </div>
-  </nav>
+    <!-- NAVIGATION -->
+    <header>
+        <div class="logo">VECTUZ</div>
+        <nav>
+            <a href="#services">Services</a>
+            <a href="#showcase">Our Stack</a>
+            <a href="#contact">Build With Us</a>
+        </nav>
+        <button class="cta-btn" onclick="document.getElementById('contact').scrollIntoView({behavior: 'smooth'})">Get Started</button>
+    </header>
 
-  <!-- Mobile Menu -->
-  <div id="mobileMenu" class="hidden md:hidden bg-white shadow-lg">
-    <div class="flex flex-col px-6 py-4 space-y-4 text-lg">
-      <a href="#services" onclick="toggleMobileMenu()" class="hover:text-indigo-600">Services</a>
-      <a href="#portfolio" onclick="toggleMobileMenu()" class="hover:text-indigo-600">Portfolio</a>
-      <a href="#about" onclick="toggleMobileMenu()" class="hover:text-indigo-600">About</a>
-      <a href="#contact" onclick="toggleMobileMenu()" class="hover:text-indigo-600">Contact</a>
-    </div>
-  </div>
+    <!-- HERO SECTION -->
+    <section class="hero">
+        <div class="badge">Next-Gen Cross-Platform Engineering</div>
+        <h1>We Engine High-Performance Web & <span>Mobile Ecosystems</span></h1>
+        <p>Turning complex architecture into seamless user experiences. VECTUZ designs and deploys custom web apps, native iOS apps, and optimized Android software solutions.</p>
+        <button class="cta-btn" style="padding: 1rem 2rem; font-size: 1.05rem;" onclick="document.getElementById('services').scrollIntoView({behavior: 'smooth'})">Explore Capabilities</button>
+    </section>
 
-  <!-- Hero Section -->
-  <section class="hero-bg h-screen flex items-center text-white">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-      <h1 class="text-6xl md:text-7xl font-bold mb-6">
-        We Build Digital Experiences
-      </h1>
-      <p class="text-2xl md:text-3xl mb-10 max-w-2xl mx-auto">
-        Professional Websites • iOS Apps • Android Apps
-      </p>
-      <a href="#contact" 
-         class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-semibold px-10 py-5 rounded-xl transition transform hover:scale-105">
-        Get Your Free Quote
-      </a>
-    </div>
-  </section>
-
-  <!-- Services -->
-  <section id="services" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-6">
-      <h2 class="text-5xl font-bold text-center mb-16">Our Services</h2>
-      
-      <div class="grid md:grid-cols-3 gap-10">
-        <!-- Website -->
-        <div class="bg-gray-50 p-10 rounded-3xl hover:shadow-2xl transition">
-          <i class="fas fa-globe text-6xl text-indigo-600 mb-6"></i>
-          <h3 class="text-3xl font-semibold mb-4">Websites</h3>
-          <p class="text-gray-600 text-lg">
-            Fast, modern, responsive websites that convert visitors into customers. 
-            E-commerce, portfolios, business sites & more.
-          </p>
+    <!-- SERVICES SECTION -->
+    <section id="services" class="services">
+        <h2 class="section-title">Core Competencies</h2>
+        <div class="grid">
+            <!-- Web App Card -->
+            <div class="card">
+                <div class="card-icon icon-web">W</div>
+                <h3>Web Application Architecture</h3>
+                <p>Custom responsive interfaces built with clean structural semantics, high-end CSS interactivity, and blazing fast frontend runtime performance.</p>
+            </div>
+            <!-- iOS App Card -->
+            <div class="card">
+                <div class="card-icon icon-ios">iOS</div>
+                <h3>Native iOS Applications</h3>
+                <p>Engineered for Apple devices. Leverage fluid animations, native system frameworks, and responsive workflows tailored specifically for the iOS ecosystem.</p>
+            </div>
+            <!-- Android App Card -->
+            <div class="card">
+                <div class="card-icon icon-android">An</div>
+                <h3>High-Scale Android Apps</h3>
+                <p>Robust, secure mobile apps deployable across a vast matrix of devices, optimized for hardware efficiency, speed, and standard material guidelines.</p>
+            </div>
         </div>
+    </section>
 
-        <!-- iOS Apps -->
-        <div class="bg-gray-50 p-10 rounded-3xl hover:shadow-2xl transition">
-          <i class="fab fa-apple text-6xl text-black mb-6"></i>
-          <h3 class="text-3xl font-semibold mb-4">iOS Apps</h3>
-          <p class="text-gray-600 text-lg">
-            Beautiful native iOS applications built with Swift and SwiftUI. 
-            From idea to App Store.
-          </p>
-        </div>
-
-        <!-- Android Apps -->
-        <div class="bg-gray-50 p-10 rounded-3xl hover:shadow-2xl transition">
-          <i class="fab fa-android text-6xl text-green-600 mb-6"></i>
-          <h3 class="text-3xl font-semibold mb-4">Android Apps</h3>
-          <p class="text-gray-600 text-lg">
-            High-performance Android apps using Kotlin & Jetpack Compose. 
-            Ready for Google Play.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Portfolio -->
-  <section id="portfolio" class="py-20 bg-gray-100">
-    <div class="max-w-7xl mx-auto px-6">
-      <h2 class="text-5xl font-bold text-center mb-16">Recent Projects</h2>
-      
-      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-        <div class="bg-white rounded-3xl overflow-hidden shadow-lg">
-          <img src="https://picsum.photos/id/201/600/400" class="w-full h-64 object-cover"/>
-          <div class="p-6">
-            <h4 class="font-semibold text-2xl">Fitness Tracking App</h4>
-            <p class="text-gray-500">iOS + Android • React Native</p>
-          </div>
-        </div>
-        <div class="bg-white rounded-3xl overflow-hidden shadow-lg">
-          <img src="https://picsum.photos/id/237/600/400" class="w-full h-64 object-cover"/>
-          <div class="p-6">
-            <h4 class="font-semibold text-2xl">E-commerce Store</h4>
-            <p class="text-gray-500">Website + Payment Integration</p>
-          </div>
-        </div>
-        <div class="bg-white rounded-3xl overflow-hidden shadow-lg">
-          <img src="https://picsum.photos/id/180/600/400" class="w-full h-64 object-cover"/>
-          <div class="p-6">
-            <h4 class="font-semibold text-2xl">Delivery Management App</h4>
-            <p class="text-gray-500">Android • Real-time Tracking</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- About -->
-  <section id="about" class="py-20 bg-white">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-      <h2 class="text-5xl font-bold mb-10">Why Choose Vectors?</h2>
-      <p class="max-w-3xl mx-auto text-xl text-gray-600 leading-relaxed">
-        With years of experience building digital products, we turn your ideas into reality. 
-        Whether you need a stunning website or a powerful mobile app for iOS and Android, 
-        we deliver clean code, beautiful design, and reliable performance.
-      </p>
-    </div>
-  </section>
-
-  <!-- Contact -->
-  <section id="contact" class="py-20 bg-indigo-700 text-white">
-    <div class="max-w-4xl mx-auto px-6">
-      <h2 class="text-5xl font-bold text-center mb-12">Let's Build Something Great</h2>
-      
-      <form id="contactForm" class="space-y-8">
-        <div class="grid md:grid-cols-2 gap-6">
-          <input type="text" placeholder="Your Name" class="w-full px-6 py-4 rounded-2xl bg-white/10 border border-white/30 focus:outline-none focus:border-white text-white placeholder-gray-300" required/>
-          <input type="email" placeholder="Email Address" class="w-full px-6 py-4 rounded-2xl bg-white/10 border border-white/30 focus:outline-none focus:border-white text-white placeholder-gray-300" required/>
-        </div>
-        <input type="text" placeholder="Project Type (Website / iOS / Android / Both)" 
-               class="w-full px-6 py-4 rounded-2xl bg-white/10 border border-white/30 focus:outline-none focus:border-white text-white placeholder-gray-300"/>
-        <textarea placeholder="Tell us about your project..." rows="6"
-                  class="w-full px-6 py-4 rounded-2xl bg-white/10 border border-white/30 focus:outline-none focus:border-white text-white placeholder-gray-300"></textarea>
+    <!-- INTERACTIVE SHOWCASE (JAVASCRIPT POWERED) -->
+    <section id="showcase" class="showcase">
+        <h2 class="section-title">Cross-Platform Capabilities</h2>
         
-        <button type="submit"
-                class="w-full bg-white text-indigo-700 font-bold text-xl py-5 rounded-2xl hover:bg-gray-100 transition">
-          Send Message
-        </button>
-      </form>
-    </div>
-  </section>
+        <div class="toggle-container">
+            <button class="toggle-btn active" onclick="switchPlatform('web', this)">Web Engines</button>
+            <button class="toggle-btn" onclick="switchPlatform('ios', this)">iOS Apps</button>
+            <button class="toggle-btn" onclick="switchPlatform('android', this)">Android Software</button>
+        </div>
 
-  <!-- Footer -->
-  <footer class="bg-gray-900 text-white py-12">
-    <div class="max-w-7xl mx-auto px-6 text-center">
-      <p class="text-2xl font-bold mb-4">Vectors</p>
-      <p class="text-gray-400">© 2026 Vectors Studio. All Rights Reserved.</p>
-    </div>
-  </footer>
+        <div class="mockup-display" id="displayBox">
+            <div class="mockup-frame" id="displayContent">
+                <h3 style="margin-bottom: 0.5rem; color: #818cf8;">VECTUZ Web Frameworks</h3>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Building robust websites using semantic HTML5 structures, scalable modern layouts, and reactive client-side JavaScript execution.</p>
+            </div>
+        </div>
+    </section>
 
-  <script>
-    // Tailwind script already loaded via CDN
-    function toggleMobileMenu() {
-      const menu = document.getElementById('mobileMenu');
-      menu.classList.toggle('hidden');
-    }
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="contact">
+        <h2 class="section-title">Initiate a Project</h2>
+        <p style="color: var(--text-muted); max-width: 500px; margin: 0 auto 1.5rem auto;">Ready to launch your website, iOS app, or Android solution? Let's discuss your architectural specifications.</p>
+        
+        <form class="contact-form" onsubmit="handleFormSubmit(event)">
+            <input type="text" id="clientName" placeholder="Your Name or Business" required>
+            <input type="email" id="clientEmail" placeholder="Email Address" required>
+            <textarea id="projectDetails" rows="5" placeholder="Tell us about the web or mobile application you want to engineer..." required></textarea>
+            <button type="submit" class="cta-btn" style="width: 100%; padding: 1rem;">Send Project Brief</button>
+        </form>
+    </section>
 
-    // Simple form submission alert
-    document.getElementById('contactForm').addEventListener('submit', function(e) {
-      e.preventDefault();
-      alert("Thank you! We'll get back to you within 24 hours.");
-      this.reset();
-    });
-  </script>
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2026 VECTUZ Technologies. All Rights Reserved. Engineered for Global Deployment.</p>
+    </footer>
+
+    <!-- --- JAVASCRIPT PROGRAMMING LOGIC --- -->
+    <script>
+        // Platform Showcase State Map
+        const platformData = {
+            web: {
+                title: "VECTUZ Web Frameworks",
+                description: "Building robust websites using semantic HTML5 structures, scalable modern CSS layouts, and reactive client-side JavaScript execution.",
+                color: "#818cf8"
+            },
+            ios: {
+                title: "Swift iOS Implementations",
+                description: "Designing sleek mobile layouts, gesture animations, and native device interactions engineered specifically for Apple Swift-based ecosystems.",
+                color: "#2997ff"
+            },
+            android: {
+                title: "Scalable Android Architectures",
+                description: "Compiling modular application layers for Google Play ecosystems, handling asynchronous thread execution, and managing adaptive rendering.",
+                color: "#3ddc84"
+            }
+        };
+
+        // Interactive Toggle Functionality
+        function switchPlatform(platform, buttonElement) {
+            // Update Active Class State on Buttons
+            const buttons = document.querySelectorAll('.toggle-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            buttonElement.classList.add('active');
+
+            // Select Target Elements
+            const displayContent = document.getElementById('displayContent');
+            const displayBox = document.getElementById('displayBox');
+            const data = platformData[platform];
+
+            // Animate transition using native opacity shifts
+            displayContent.style.opacity = 0;
+            displayContent.style.transform = "scale(0.95)";
+
+            setTimeout(() => {
+                // Modify DOM properties dynamically
+                displayContent.innerHTML = `
+                    <h3 style="margin-bottom: 0.5rem; color: ${data.color};">${data.title}</h3>
+                    <p style="color: var(--text-muted); font-size: 0.95rem;">${data.description}</p>
+                `;
+                displayBox.style.borderColor = data.color + "44"; // add alpha transparency to borders
+                
+                // Fade back in
+                displayContent.style.opacity = 1;
+                displayContent.style.transform = "scale(1)";
+            }, 200);
+        }
+
+        // Functional Contact Submission Interceptor
+        function handleFormSubmit(event) {
+            event.preventDefault(); // Stop page reload
+            
+            const name = document.getElementById('clientName').value;
+            const email = document.getElementById('clientEmail').value;
+            
+            // Log local capture to mirror real frontend operations
+            console.log(`[VECTUZ Lead Capture] Name: ${name}, Email: ${email}`);
+            
+            alert(`Thank you, ${name}! Your project brief has been logged. The VECTUZ engineering unit will reach out via ${email}.`);
+            
+            // Reset form fields
+            event.target.reset();
+        }
+    </script>
 </body>
 </html>
