@@ -1,89 +1,191 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VECTUZ Sports | Premium World Cup Odds</title>
-    <link rel="stylesheet" href="./css/style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vectors | Websites & Mobile Apps</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"/>
+  <style>
+    .hero-bg {
+      background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://picsum.photos/id/1015/2000/1200');
+      background-size: cover;
+      background-position: center;
+    }
+  </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-900 font-sans">
 
-    <!-- Navigation -->
-    <nav class="ios-nav glass">
-        <div class="nav-content">
-            <h1 class="logo">VECTUZ</h1>
-            <button class="btn-secondary" id="loginBtn">Sign In</button>
+  <!-- Navbar -->
+  <nav class="bg-white shadow-md sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+      <div class="text-3xl font-bold text-indigo-600">Vectors</div>
+      
+      <div class="hidden md:flex space-x-8 text-lg">
+        <a href="#services" class="hover:text-indigo-600 transition">Services</a>
+        <a href="#portfolio" class="hover:text-indigo-600 transition">Portfolio</a>
+        <a href="#about" class="hover:text-indigo-600 transition">About</a>
+        <a href="#contact" class="hover:text-indigo-600 transition">Contact</a>
+      </div>
+      
+      <button onclick="toggleMobileMenu()" class="md:hidden text-2xl">
+        <i class="fas fa-bars"></i>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobileMenu" class="hidden md:hidden bg-white shadow-lg">
+    <div class="flex flex-col px-6 py-4 space-y-4 text-lg">
+      <a href="#services" onclick="toggleMobileMenu()" class="hover:text-indigo-600">Services</a>
+      <a href="#portfolio" onclick="toggleMobileMenu()" class="hover:text-indigo-600">Portfolio</a>
+      <a href="#about" onclick="toggleMobileMenu()" class="hover:text-indigo-600">About</a>
+      <a href="#contact" onclick="toggleMobileMenu()" class="hover:text-indigo-600">Contact</a>
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section class="hero-bg h-screen flex items-center text-white">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <h1 class="text-6xl md:text-7xl font-bold mb-6">
+        We Build Digital Experiences
+      </h1>
+      <p class="text-2xl md:text-3xl mb-10 max-w-2xl mx-auto">
+        Professional Websites • iOS Apps • Android Apps
+      </p>
+      <a href="#contact" 
+         class="inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-xl font-semibold px-10 py-5 rounded-xl transition transform hover:scale-105">
+        Get Your Free Quote
+      </a>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-5xl font-bold text-center mb-16">Our Services</h2>
+      
+      <div class="grid md:grid-cols-3 gap-10">
+        <!-- Website -->
+        <div class="bg-gray-50 p-10 rounded-3xl hover:shadow-2xl transition">
+          <i class="fas fa-globe text-6xl text-indigo-600 mb-6"></i>
+          <h3 class="text-3xl font-semibold mb-4">Websites</h3>
+          <p class="text-gray-600 text-lg">
+            Fast, modern, responsive websites that convert visitors into customers. 
+            E-commerce, portfolios, business sites & more.
+          </p>
         </div>
-    </nav>
 
-    <!-- Main Dashboard -->
-    <main class="dashboard">
-        <header class="dashboard-header">
-            <h2>World Cup 2026</h2>
-            <p>Exclusive Surebet Analytics</p>
-        </header>
-
-        <!-- Games Grid -->
-        <section class="games-grid" id="gamesGrid">
-            <!-- Game Card 1 -->
-            <article class="game-card">
-                <div class="teams">
-                    <span class="team">Brazil</span>
-                    <span class="vs">vs</span>
-                    <span class="team">France</span>
-                </div>
-                <div class="match-details">
-                    <p class="date">June 24, 2026 • Group Stage</p>
-                    <p class="confidence">Confidence: <strong>94%</strong></p>
-                </div>
-                <button class="btn-primary buy-odds-btn" data-game="BRA vs FRA" data-price="$49.99">Unlock Surebet - $49.99</button>
-            </article>
-
-            <!-- Game Card 2 -->
-            <article class="game-card">
-                <div class="teams">
-                    <span class="team">USA</span>
-                    <span class="vs">vs</span>
-                    <span class="team">England</span>
-                </div>
-                <div class="match-details">
-                    <p class="date">June 26, 2026 • Group Stage</p>
-                    <p class="confidence">Confidence: <strong>88%</strong></p>
-                </div>
-                <button class="btn-primary buy-odds-btn" data-game="USA vs ENG" data-price="$39.99">Unlock Surebet - $39.99</button>
-            </article>
-        </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="site-footer">
-        <p>&copy; 2026 VECTUZ Sports. All rights reserved.</p>
-        <a href="#" class="tc-link">Terms & Conditions</a>
-    </footer>
-
-    <!-- Payment Prompt Modal -->
-    <dialog id="paymentModal" class="ios-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="modalGameTitle">Match Name</h3>
-                <button class="close-btn" id="closeModalBtn">&times;</button>
-            </div>
-            <p class="modal-subtitle">Secure Payment</p>
-            
-            <div class="payment-details">
-                <div class="detail-row">
-                    <span>Premium Odds Package</span>
-                    <span id="modalPrice" class="price-highlight">$0.00</span>
-                </div>
-                <hr>
-                <p class="terms-micro">By proceeding, you agree to our <a href="#">Terms & Conditions</a>. Odds access is digital and non-refundable.</p>
-            </div>
-
-            <button class="btn-pay" id="confirmPaymentBtn">Pay with Apple Pay</button>
-            <button class="btn-text" id="cancelBtn">Cancel</button>
+        <!-- iOS Apps -->
+        <div class="bg-gray-50 p-10 rounded-3xl hover:shadow-2xl transition">
+          <i class="fab fa-apple text-6xl text-black mb-6"></i>
+          <h3 class="text-3xl font-semibold mb-4">iOS Apps</h3>
+          <p class="text-gray-600 text-lg">
+            Beautiful native iOS applications built with Swift and SwiftUI. 
+            From idea to App Store.
+          </p>
         </div>
-    </dialog>
 
-    <script src="./js/app.js"></script>
+        <!-- Android Apps -->
+        <div class="bg-gray-50 p-10 rounded-3xl hover:shadow-2xl transition">
+          <i class="fab fa-android text-6xl text-green-600 mb-6"></i>
+          <h3 class="text-3xl font-semibold mb-4">Android Apps</h3>
+          <p class="text-gray-600 text-lg">
+            High-performance Android apps using Kotlin & Jetpack Compose. 
+            Ready for Google Play.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Portfolio -->
+  <section id="portfolio" class="py-20 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-6">
+      <h2 class="text-5xl font-bold text-center mb-16">Recent Projects</h2>
+      
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div class="bg-white rounded-3xl overflow-hidden shadow-lg">
+          <img src="https://picsum.photos/id/201/600/400" class="w-full h-64 object-cover"/>
+          <div class="p-6">
+            <h4 class="font-semibold text-2xl">Fitness Tracking App</h4>
+            <p class="text-gray-500">iOS + Android • React Native</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-3xl overflow-hidden shadow-lg">
+          <img src="https://picsum.photos/id/237/600/400" class="w-full h-64 object-cover"/>
+          <div class="p-6">
+            <h4 class="font-semibold text-2xl">E-commerce Store</h4>
+            <p class="text-gray-500">Website + Payment Integration</p>
+          </div>
+        </div>
+        <div class="bg-white rounded-3xl overflow-hidden shadow-lg">
+          <img src="https://picsum.photos/id/180/600/400" class="w-full h-64 object-cover"/>
+          <div class="p-6">
+            <h4 class="font-semibold text-2xl">Delivery Management App</h4>
+            <p class="text-gray-500">Android • Real-time Tracking</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- About -->
+  <section id="about" class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <h2 class="text-5xl font-bold mb-10">Why Choose Vectors?</h2>
+      <p class="max-w-3xl mx-auto text-xl text-gray-600 leading-relaxed">
+        With years of experience building digital products, we turn your ideas into reality. 
+        Whether you need a stunning website or a powerful mobile app for iOS and Android, 
+        we deliver clean code, beautiful design, and reliable performance.
+      </p>
+    </div>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="py-20 bg-indigo-700 text-white">
+    <div class="max-w-4xl mx-auto px-6">
+      <h2 class="text-5xl font-bold text-center mb-12">Let's Build Something Great</h2>
+      
+      <form id="contactForm" class="space-y-8">
+        <div class="grid md:grid-cols-2 gap-6">
+          <input type="text" placeholder="Your Name" class="w-full px-6 py-4 rounded-2xl bg-white/10 border border-white/30 focus:outline-none focus:border-white text-white placeholder-gray-300" required/>
+          <input type="email" placeholder="Email Address" class="w-full px-6 py-4 rounded-2xl bg-white/10 border border-white/30 focus:outline-none focus:border-white text-white placeholder-gray-300" required/>
+        </div>
+        <input type="text" placeholder="Project Type (Website / iOS / Android / Both)" 
+               class="w-full px-6 py-4 rounded-2xl bg-white/10 border border-white/30 focus:outline-none focus:border-white text-white placeholder-gray-300"/>
+        <textarea placeholder="Tell us about your project..." rows="6"
+                  class="w-full px-6 py-4 rounded-2xl bg-white/10 border border-white/30 focus:outline-none focus:border-white text-white placeholder-gray-300"></textarea>
+        
+        <button type="submit"
+                class="w-full bg-white text-indigo-700 font-bold text-xl py-5 rounded-2xl hover:bg-gray-100 transition">
+          Send Message
+        </button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-12">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <p class="text-2xl font-bold mb-4">Vectors</p>
+      <p class="text-gray-400">© 2026 Vectors Studio. All Rights Reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    // Tailwind script already loaded via CDN
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobileMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Simple form submission alert
+    document.getElementById('contactForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      alert("Thank you! We'll get back to you within 24 hours.");
+      this.reset();
+    });
+  </script>
 </body>
 </html>
