@@ -1,1 +1,0 @@
-# vectuz.github.io
