@@ -1,0 +1,25 @@
+# Asme — Liquid Glass Hero Section
+
+A dark cinematic hero section featuring:
+- Full-screen looping background video shifted by `translate-y-[17%]`
+- Seamless `requestAnimationFrame`-based JS video fade system (500ms fade-in/out, no CSS transitions)
+- Google Font "Instrument Serif" typography
+- Custom `.liquid-glass` border-masked elements with luminosity blending
+- Responsive navigation bar, email subscription pill, and social media footer
+
+## Getting Started
+
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+2. Start the local development server:
+   ```bash
+   npm run dev
+   ```
+
+3. Build for production:
+   ```bash
+   npm run build
+   ```
