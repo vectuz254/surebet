@@ -1,347 +1,263 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useTypewriter } from './hooks/useTypewriter';
+import { Globe, ArrowRight, Instagram, Twitter } from 'lucide-react';
+
+const VIDEO_URL =
+  'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_115001_bcdaa3b4-03de-47e7-ad63-ae3e392c32d4.mp4';
+const FADE_MS = 500;
+const FADE_OUT_LEAD = 0.55;
 
 export default function App() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [buttonsVisible, setButtonsVisible] = useState(false);
-
+  const [email, setEmail] = useState('');
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const prevXRef = useRef<number | null>(null);
-  const targetTimeRef = useRef<number>(0);
-  const isSeekingRef = useRef<boolean>(false);
+  const rafRef = useRef<number | null>(null);
+  const fadingOutRef = useRef<boolean>(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const SENSITIVITY = 0.8;
-
-  const typewriterText =
-    'Glad you stopped in. Good taste tends to find us. Now, what are we building?';
-  const { displayed, done } = useTypewriter(typewriterText, 38, 600);
-
-  // Mouse scrub video control
-  useEffect(() => {
-    const handleMouseMove = (e: MouseEvent) => {
-      const video = videoRef.current;
-      if (!video || !video.duration || Number.isNaN(video.duration)) {
-        prevXRef.current = e.clientX;
-        return;
-      }
-
-      if (prevXRef.current === null) {
-        prevXRef.current = e.clientX;
-        return;
-      }
-
-      const delta = e.clientX - prevXRef.current;
-      prevXRef.current = e.clientX;
-
-      const timeOffset =
-        (delta / window.innerWidth) * SENSITIVITY * video.duration;
-      let nextTarget = targetTimeRef.current + timeOffset;
-      nextTarget = Math.max(0, Math.min(video.duration, nextTarget));
-      targetTimeRef.current = nextTarget;
-
-      if (!isSeekingRef.current) {
-        isSeekingRef.current = true;
-        video.currentTime = nextTarget;
-      }
-    };
-
-    const handleSeeked = () => {
-      const video = videoRef.current;
-      if (!video) {
-        isSeekingRef.current = false;
-        return;
-      }
-
-      if (Math.abs(video.currentTime - targetTimeRef.current) > 0.001) {
-        video.currentTime = targetTimeRef.current;
-      } else {
-        isSeekingRef.current = false;
-      }
-    };
-
+  // Custom requestAnimationFrame-based crossfade system (resumes from current opacity)
+  const fadeTo = (target: number, duration: number = FADE_MS) => {
     const video = videoRef.current;
-    if (video) {
-      video.addEventListener('seeked', handleSeeked);
+    if (!video) return;
+
+    // Interrupt any running animation frame to prevent competing fades
+    if (rafRef.current !== null) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
     }
-    window.addEventListener('mousemove', handleMouseMove);
+
+    const from = parseFloat(video.style.opacity || '0');
+    if (from === target) return;
+
+    const start = performance.now();
+
+    const tick = (now: number) => {
+      const elapsed = now - start;
+      const t = Math.min(elapsed / duration, 1);
+      video.style.opacity = String(from + (target - from) * t);
+
+      if (t < 1) {
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        rafRef.current = null;
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  };
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+
+    const handleLoadedData = () => {
+      video.style.opacity = '0';
+      video.play().catch(() => {});
+      fadeTo(1, FADE_MS);
+    };
+
+    const handleTimeUpdate = () => {
+      if (!video.duration) return;
+      const remaining = video.duration - video.currentTime;
+      // Trigger 500ms fade-out when 0.55s remain before video end
+      if (!fadingOutRef.current && remaining <= FADE_OUT_LEAD && remaining > 0) {
+        fadingOutRef.current = true;
+        fadeTo(0, FADE_MS);
+      }
+    };
+
+    const handleEnded = () => {
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      video.style.opacity = '0';
+
+      // Reset to 0 after 100ms, play, and fade back in
+      timeoutRef.current = setTimeout(() => {
+        const v = videoRef.current;
+        if (!v) return;
+        v.currentTime = 0;
+        v.play().catch(() => {});
+        fadingOutRef.current = false;
+        fadeTo(1, FADE_MS);
+      }, 100);
+    };
+
+    video.addEventListener('loadeddata', handleLoadedData);
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    video.addEventListener('ended', handleEnded);
+
+    if (video.readyState >= 2) {
+      handleLoadedData();
+    }
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove);
-      if (video) {
-        video.removeEventListener('seeked', handleSeeked);
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
       }
+      if (timeoutRef.current !== null) {
+        clearTimeout(timeoutRef.current);
+      }
+      video.removeEventListener('loadeddata', handleLoadedData);
+      video.removeEventListener('timeupdate', handleTimeUpdate);
+      video.removeEventListener('ended', handleEnded);
     };
-  }, [SENSITIVITY]);
-
-  // Action pill buttons animation (400ms after mount)
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setButtonsVisible(true);
-    }, 400);
-
-    return () => clearTimeout(timer);
   }, []);
 
-  const handleCopyEmail = () => {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText('hello@mainframe.co');
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email) {
+      alert(`Thank you for subscribing with: ${email}`);
+      setEmail('');
     }
   };
 
   return (
-    <div className="relative w-full h-screen overflow-hidden select-text text-black">
-      {/* Background Video (mouse-scrub controlled) */}
+    <div className="relative min-h-screen bg-black overflow-hidden flex flex-col justify-between selection:bg-white/20 selection:text-white">
+      {/* Full-screen Background Video */}
       <video
         ref={videoRef}
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260530_042513_df96a13b-6155-4f6e-8b93-c9dee66fba08.mp4"
-        className="fixed inset-0 z-0 w-full h-full object-cover"
-        style={{ objectPosition: '70% center' }}
+        src={VIDEO_URL}
         muted
+        autoPlay
         playsInline
         preload="auto"
-        onLoadedMetadata={() => {
-          if (videoRef.current) {
-            targetTimeRef.current = videoRef.current.currentTime || 0;
-          }
-        }}
+        className="absolute inset-0 w-full h-full object-cover translate-y-[17%] pointer-events-none"
+        style={{ opacity: 0 }}
       />
 
-      {/* Navbar (fixed, z-index: 10) */}
-      <header className="fixed top-0 left-0 right-0 z-10 w-full px-5 sm:px-8 py-4 sm:py-5 flex justify-between items-center">
-        {/* Logo (left) */}
-        <div className="flex items-center gap-3">
-          <span
-            className="text-[21px] sm:text-[26px] tracking-tight text-black font-heading select-none cursor-default"
-            style={{ fontFamily: 'var(--font-heading)' }}
-          >
-            Mainframe®
-          </span>
-          <span
-            className="text-[25px] sm:text-[30px] text-black select-none leading-none cursor-default"
-            style={{ letterSpacing: '-0.02em' }}
-            aria-hidden="true"
-          >
-            ✳︎
-          </span>
-        </div>
+      {/* Navigation bar (relative z-20, padding pl-6 pr-6 py-6) */}
+      <nav className="relative z-20 pl-6 pr-6 py-6 w-full">
+        {/* Inner container: rounded-full px-6 py-3 flex items-center justify-between max-w-5xl mx-auto */}
+        <div className="liquid-glass rounded-full px-6 py-3 flex items-center justify-between max-w-5xl mx-auto">
+          {/* Left side: Logo area with Globe icon & "Asme" + nav links */}
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-2 text-white">
+              <Globe size={24} className="text-white" />
+              <span className="font-semibold text-lg tracking-tight">Asme</span>
+            </div>
 
-        {/* Desktop Nav Links (center, hidden below md) */}
-        <nav
-          aria-label="Desktop navigation"
-          className="hidden md:flex items-center text-[23px] text-black"
-        >
-          <a href="#labs" className="hover:opacity-60 transition-opacity">
-            Labs
-          </a>
-          <span className="select-none">,&nbsp;</span>
-          <a href="#studio" className="hover:opacity-60 transition-opacity">
-            Studio
-          </a>
-          <span className="select-none">,&nbsp;</span>
-          <a href="#openings" className="hover:opacity-60 transition-opacity">
-            Openings
-          </a>
-          <span className="select-none">,&nbsp;</span>
-          <a href="#shop" className="hover:opacity-60 transition-opacity">
-            Shop
-          </a>
-        </nav>
-
-        {/* Desktop CTA (right, hidden below md) */}
-        <div className="hidden md:block">
-          <a
-            href="#contact"
-            className="text-[23px] text-black underline underline-offset-2 hover:opacity-60 transition-opacity"
-          >
-            Get in touch
-          </a>
-        </div>
-
-        {/* Mobile Hamburger Button (visible below md) */}
-        <button
-          type="button"
-          aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}
-          onClick={() => setIsMenuOpen((prev) => !prev)}
-          className="md:hidden flex flex-col justify-center items-center gap-[5px] w-8 h-8 z-20 cursor-pointer bg-transparent border-0 p-0 focus:outline-none"
-        >
-          <span
-            className={`w-6 h-[2px] bg-black duration-300 transition-all transform origin-center ${
-              isMenuOpen ? 'rotate-45 translate-y-[7px]' : 'rotate-0 translate-y-0'
-            }`}
-          />
-          <span
-            className={`w-6 h-[2px] bg-black duration-300 transition-all ${
-              isMenuOpen ? 'opacity-0' : 'opacity-100'
-            }`}
-          />
-          <span
-            className={`w-6 h-[2px] bg-black duration-300 transition-all transform origin-center ${
-              isMenuOpen ? '-rotate-45 -translate-y-[7px]' : 'rotate-0 translate-y-0'
-            }`}
-          />
-        </button>
-      </header>
-
-      {/* Mobile Overlay (z-index: 9) */}
-      <div
-        className={`fixed inset-0 bg-white/95 backdrop-blur-sm flex flex-col justify-center items-start px-8 gap-8 z-[9] md:hidden transition-all duration-300 ${
-          isMenuOpen
-            ? 'opacity-100 pointer-events-auto'
-            : 'opacity-0 pointer-events-none'
-        }`}
-      >
-        <a
-          href="#labs"
-          onClick={() => setIsMenuOpen(false)}
-          className="text-[32px] font-medium text-black hover:opacity-60 transition-opacity"
-        >
-          Labs
-        </a>
-        <a
-          href="#studio"
-          onClick={() => setIsMenuOpen(false)}
-          className="text-[32px] font-medium text-black hover:opacity-60 transition-opacity"
-        >
-          Studio
-        </a>
-        <a
-          href="#openings"
-          onClick={() => setIsMenuOpen(false)}
-          className="text-[32px] font-medium text-black hover:opacity-60 transition-opacity"
-        >
-          Openings
-        </a>
-        <a
-          href="#shop"
-          onClick={() => setIsMenuOpen(false)}
-          className="text-[32px] font-medium text-black hover:opacity-60 transition-opacity"
-        >
-          Shop
-        </a>
-        <a
-          href="#contact"
-          onClick={() => setIsMenuOpen(false)}
-          className="text-[32px] font-medium text-black underline underline-offset-2 hover:opacity-60 transition-opacity"
-        >
-          Get in touch
-        </a>
-      </div>
-
-      {/* Hero Section (z-index: 1) */}
-      <main className="relative z-[1] w-full h-screen flex flex-col justify-end pb-12 md:justify-center md:pb-0 px-5 sm:px-8 md:px-10 overflow-hidden">
-        <div className="max-w-xl relative z-10">
-          {/* 1. Blurred intro label */}
-          <div
-            className="pointer-events-none select-none mb-5 sm:mb-6"
-            style={{
-              fontSize: 'clamp(18px, 4vw, 26px)',
-              lineHeight: 1.3,
-              fontWeight: 400,
-              color: '#000',
-              filter: 'blur(4px)',
-            }}
-          >
-            Hey there, meet A.R.I.A,
-            <br />
-            Mainframe's Adaptive Response Interface Agent
+            {/* Desktop Nav links (hidden on mobile, shown on md:) */}
+            <div className="hidden md:flex items-center gap-8">
+              <a
+                href="#features"
+                className="text-white/80 hover:text-white transition-colors text-sm font-medium"
+              >
+                Features
+              </a>
+              <a
+                href="#pricing"
+                className="text-white/80 hover:text-white transition-colors text-sm font-medium"
+              >
+                Pricing
+              </a>
+              <a
+                href="#about"
+                className="text-white/80 hover:text-white transition-colors text-sm font-medium"
+              >
+                About
+              </a>
+            </div>
           </div>
 
-          {/* 2. Typewriter text */}
-          <p
-            className="text-black mb-5 sm:mb-6"
-            style={{
-              fontSize: 'clamp(18px, 4vw, 26px)',
-              lineHeight: 1.35,
-              fontWeight: 400,
-              minHeight: '54px',
-            }}
+          {/* Right side (gap-4): "Sign Up" plain text & "Login" liquid-glass button */}
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              className="text-white hover:text-white/80 text-sm font-medium transition-colors cursor-pointer"
+            >
+              Sign Up
+            </button>
+            <button
+              type="button"
+              className="liquid-glass rounded-full px-6 py-2 text-white text-sm font-medium hover:bg-white/5 transition-colors cursor-pointer"
+            >
+              Login
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      {/* Hero content area (relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 text-center -translate-y-[20%]) */}
+      <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-6 py-12 text-center -translate-y-[20%]">
+        {/* Heading with Instrument Serif */}
+        <h1
+          className="text-5xl md:text-6xl lg:text-7xl text-white mb-8 tracking-tight whitespace-nowrap"
+          style={{ fontFamily: "'Instrument Serif', serif" }}
+        >
+          Built for the curious
+        </h1>
+
+        {/* max-w-xl w-full space-y-4 container */}
+        <div className="max-w-xl w-full space-y-4">
+          {/* Email input bar */}
+          <form
+            onSubmit={handleSubmit}
+            className="liquid-glass rounded-full pl-6 pr-2 py-2 flex items-center gap-3"
           >
-            {displayed}
-            {!done && (
-              <span
-                className="inline-block w-[2px] h-[1.1em] bg-black align-middle ml-[2px] cursor-blink"
-                aria-hidden="true"
-              />
-            )}
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              required
+              className="bg-transparent border-none outline-none flex-1 text-white placeholder:text-white/40 text-base focus:outline-none"
+            />
+            <button
+              type="submit"
+              aria-label="Submit email"
+              className="bg-white rounded-full p-3 text-black hover:bg-white/90 transition-colors flex items-center justify-center shrink-0 cursor-pointer"
+            >
+              <ArrowRight size={20} />
+            </button>
+          </form>
+
+          {/* Subtitle text */}
+          <p className="text-white text-sm leading-relaxed px-4">
+            Stay updated with the latest news and insights. Subscribe to our newsletter today and never miss out on exciting updates.
           </p>
 
-          {/* 3. Action pill buttons */}
-          <div
-            className={`flex flex-wrap gap-y-1 ${
-              buttonsVisible
-                ? 'opacity-100 translate-y-0'
-                : 'opacity-0 translate-y-[8px]'
-            }`}
-            style={{
-              transition: 'opacity 0.4s ease, transform 0.4s ease',
-            }}
-          >
-            {/* 4 white pill buttons */}
+          {/* Manifesto button (centered) */}
+          <div className="flex justify-center pt-2">
             <button
               type="button"
-              className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap hover:bg-black hover:text-white transition-colors duration-200 cursor-pointer"
+              className="liquid-glass rounded-full px-8 py-3 text-white text-sm font-medium hover:bg-white/5 transition-colors cursor-pointer"
             >
-              Pitch us an idea
-            </button>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap hover:bg-black hover:text-white transition-colors duration-200 cursor-pointer"
-            >
-              Come work here
-            </button>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap hover:bg-black hover:text-white transition-colors duration-200 cursor-pointer"
-            >
-              Send a brief hello
-            </button>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center bg-white text-black border border-black/10 rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap hover:bg-black hover:text-white transition-colors duration-200 cursor-pointer"
-            >
-              See how we operate
-            </button>
-
-            {/* 1 outline pill button */}
-            <button
-              type="button"
-              onClick={handleCopyEmail}
-              className="inline-flex items-center justify-center text-white bg-transparent border border-white rounded-full text-[13px] sm:text-[15px] px-4 sm:px-5 py-[0.3em] mx-[0.2em] mb-[0.4em] whitespace-nowrap gap-2 sm:gap-3 hover:bg-white hover:text-black transition-colors duration-200 cursor-pointer"
-            >
-              <span>
-                Reach us:{' '}
-                <span className="underline underline-offset-1">
-                  hello@mainframe.co
-                </span>
-              </span>
-              <svg
-                width="12"
-                height="12"
-                viewBox="0 0 12 12"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-                className="shrink-0"
-              >
-                <rect
-                  x="3.5"
-                  y="3.5"
-                  width="7"
-                  height="7"
-                  rx="1"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                />
-                <path
-                  d="M2 8.5H1.5C1.22386 8.5 1 8.27614 1 8V1.5C1 1.22386 1.22386 1 1.5 1H8C8.27614 1 8.5 1.22386 8.5 1.5V2"
-                  stroke="currentColor"
-                  strokeWidth="1.2"
-                  strokeLinecap="round"
-                />
-              </svg>
+              Read the manifesto
             </button>
           </div>
         </div>
       </main>
+
+      {/* Social icons footer (relative z-10 flex justify-center gap-4 pb-12) */}
+      <footer className="relative z-10 flex justify-center gap-4 pb-12">
+        <a
+          href="https://instagram.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+          className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all cursor-pointer flex items-center justify-center"
+        >
+          <Instagram size={20} />
+        </a>
+        <a
+          href="https://twitter.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Twitter"
+          className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all cursor-pointer flex items-center justify-center"
+        >
+          <Twitter size={20} />
+        </a>
+        <a
+          href="https://asme.example.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Globe"
+          className="liquid-glass rounded-full p-4 text-white/80 hover:text-white hover:bg-white/5 transition-all cursor-pointer flex items-center justify-center"
+        >
+          <Globe size={20} />
+        </a>
+      </footer>
     </div>
   );
-    }
+}
